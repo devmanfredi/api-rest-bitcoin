@@ -14,16 +14,27 @@ import reactor.core.publisher.Mono;
 public class CustomerService {
     private final CustomerRepository customerRepository;
 
-    public Mono<Customer> save(Customer customer){
+    public Mono<Customer> save(Customer customer) {
         return customerRepository.save(customer);
     }
 
-    public Flux<Customer> findAll(){
+    public Flux<Customer> findAll() {
         return customerRepository.findAll();
     }
 
     public Mono<Customer> findById(Long customerId) {
         return customerRepository.findById(customerId);
+    }
+
+    public Mono<Customer> update(Customer customer) {
+        return findById(customer.getId())
+                .flatMap(customerRepository::save)
+                .thenReturn(customer);
+    }
+
+    public Mono<Void> delete(Long customerId) {
+        return findById(customerId)
+                .flatMap(customerRepository::delete);
     }
 }
 
