@@ -24,7 +24,7 @@ class CustomerServiceTest {
 
     @InjectMocks
     private CustomerService customerService;
-    //
+
     @Mock
     private CustomerRepository customerRepository;
 
@@ -39,8 +39,15 @@ class CustomerServiceTest {
     public void setUp() {
         BDDMockito.when(customerRepository.save(CustomerBuilder.createCustomerToBeSaved().build()))
                 .thenReturn(Mono.just(customer));
+
         BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Mono.just(customer));
+
+        BDDMockito.when(customerRepository.save(CustomerBuilder.createValidCustomer().build()))
+                .thenReturn(Mono.just(customer));
+
+        BDDMockito.when(customerRepository.delete(ArgumentMatchers.any(Customer.class)))
+                .thenReturn(Mono.empty());
     }
 
     @Test
@@ -78,5 +85,21 @@ class CustomerServiceTest {
                 .verifyComplete();
     }
 
+    @Test
+    @DisplayName("Update Customer")
+    public void dadoCustomer_quandoAtualizar_entaoRetornaCustomerAtualizado() {
+        StepVerifier.create(customerService.update(CustomerBuilder.createValidUpdateCustomer().build()))
+                .expectSubscription()
+                .expectNext(CustomerBuilder.createValidUpdateCustomer().build())
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("Delete Customer")
+    public void dadoCustomer_quandoDeletar_entaoRetornarSucesso(){
+        StepVerifier.create(customerService.delete(1L))
+                .expectSubscription()
+                .verifyComplete();
+    }
 
 }
