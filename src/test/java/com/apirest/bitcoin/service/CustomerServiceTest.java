@@ -10,6 +10,7 @@ import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.blockhound.BlockHound;
 import reactor.blockhound.BlockingOperationError;
 import reactor.core.publisher.Flux;
@@ -87,6 +88,18 @@ class CustomerServiceTest {
                 .expectSubscription()
                 .expectNext(customer)
                 .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("findById returns Mono error when customer does not exist")
+    public void dadoCustomer_quandoPesquisarPeloId_entaoDeveRetornar() {
+        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Mono.empty());
+
+        StepVerifier.create(customerService.findById(1L))
+                .expectSubscription()
+                .expectError(ResponseStatusException.class)
+                .verify();
     }
 
     @Test
