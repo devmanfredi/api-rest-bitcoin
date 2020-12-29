@@ -33,7 +33,7 @@ public class CustomerBuilder {
         CustomerBuilder builder = new CustomerBuilder();
         builder.customer = Customer.builder()
                 .id(1L)
-                .name("Heuler")
+                .name("Heuler Manfredi")
                 .document("02205652281")
                 .balance(BigDecimal.valueOf(10000))
                 .build();
