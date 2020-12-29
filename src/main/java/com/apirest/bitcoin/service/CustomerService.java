@@ -21,5 +21,9 @@ public class CustomerService {
     public Flux<Customer> findAll(){
         return customerRepository.findAll();
     }
+
+    public Mono<Customer> findById(Long customerId) {
+        return customerRepository.findById(customerId);
+    }
 }
 
