@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.blockhound.BlockHound;
 import reactor.blockhound.BlockingOperationError;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
@@ -48,6 +49,9 @@ class CustomerServiceTest {
 
         BDDMockito.when(customerRepository.delete(ArgumentMatchers.any(Customer.class)))
                 .thenReturn(Mono.empty());
+
+        BDDMockito.when(customerRepository.findAll())
+                .thenReturn(Flux.just(customer));
     }
 
     @Test
@@ -99,6 +103,15 @@ class CustomerServiceTest {
     public void dadoCustomer_quandoDeletar_entaoRetornarSucesso(){
         StepVerifier.create(customerService.delete(1L))
                 .expectSubscription()
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("FindAll return a flux of Customers")
+    public void findAllCustomers(){
+        StepVerifier.create(customerService.findAll())
+                .expectSubscription()
+                .expectNext(customer)
                 .verifyComplete();
     }
 
