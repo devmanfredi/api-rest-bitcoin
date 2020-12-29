@@ -5,6 +5,7 @@ import com.apirest.bitcoin.domain.Customer;
 import com.apirest.bitcoin.repository.CustomerRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -38,6 +39,8 @@ class CustomerServiceTest {
     public void setUp() {
         BDDMockito.when(customerRepository.save(CustomerBuilder.createCustomerToBeSaved().build()))
                 .thenReturn(Mono.just(customer));
+        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Mono.just(customer));
     }
 
     @Test
@@ -60,8 +63,16 @@ class CustomerServiceTest {
     @DisplayName("Save a customer")
     public void dadoCustomer_quandoSalvar_entaoRetornaCustomerSalvo() {
         Customer customerToBeSaved = CustomerBuilder.createCustomerToBeSaved().build();
-
         StepVerifier.create(customerService.save(customerToBeSaved))
+                .expectSubscription()
+                .expectNext(customer)
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("Find Customer by Id")
+    public void dadoCustomer_quandoPesquisarPeloId_entaoRetornaCustomer() {
+        StepVerifier.create(customerService.findById(1L))
                 .expectSubscription()
                 .expectNext(customer)
                 .verifyComplete();
