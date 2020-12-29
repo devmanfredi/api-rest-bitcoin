@@ -4,7 +4,9 @@ import com.apirest.bitcoin.domain.Customer;
 import com.apirest.bitcoin.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -23,7 +25,12 @@ public class CustomerService {
     }
 
     public Mono<Customer> findById(Long customerId) {
-        return customerRepository.findById(customerId);
+        return customerRepository.findById(customerId)
+                .switchIfEmpty(monoResponseStatusNotFoundException());
+    }
+
+    private <T> Mono<T> monoResponseStatusNotFoundException() {
+        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
     }
 
     public Mono<Customer> update(Customer customer) {
