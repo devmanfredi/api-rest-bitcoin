@@ -112,16 +112,40 @@ class CustomerServiceTest {
     }
 
     @Test
+    @DisplayName("update returns Mono error when customer does not exist")
+    public void dadoCustomer_quandoUpdate_entaoRetornaErro() {
+        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Mono.empty());
+
+        StepVerifier.create(customerService.update(CustomerBuilder.createValidCustomer().build()))
+                .expectSubscription()
+                .expectError(ResponseStatusException.class)
+                .verify();
+    }
+
+    @Test
     @DisplayName("Delete Customer")
-    public void dadoCustomer_quandoDeletar_entaoRetornarSucesso(){
+    public void dadoCustomer_quandoDeletar_entaoRetornarSucesso() {
         StepVerifier.create(customerService.delete(1L))
                 .expectSubscription()
                 .verifyComplete();
     }
 
     @Test
+    @DisplayName("delete returns Mono error when customer does not exist")
+    public void dadoCustomer_quandoDeletar_entaoRetornaErro() {
+        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Mono.empty());
+
+        StepVerifier.create(customerService.delete(1L))
+                .expectSubscription()
+                .expectError(ResponseStatusException.class)
+                .verify();
+    }
+
+    @Test
     @DisplayName("FindAll return a flux of Customers")
-    public void findAllCustomers(){
+    public void findAllCustomers() {
         StepVerifier.create(customerService.findAll())
                 .expectSubscription()
                 .expectNext(customer)
