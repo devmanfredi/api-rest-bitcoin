@@ -13,7 +13,7 @@ import javax.validation.Valid;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/v1/api/rest/bitcoin/customer")
+@RequestMapping("/api/v1/rest/bitcoin/customer")
 public class CustomerController {
 
     private final CustomerService customerService;
