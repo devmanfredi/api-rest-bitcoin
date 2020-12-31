@@ -59,6 +59,9 @@ public class CustomerControllerIT {
 
         BDDMockito.when(customerRepository.delete(ArgumentMatchers.any(Customer.class)))
                 .thenReturn(Mono.empty());
+
+        BDDMockito.when(customerRepository.save(CustomerBuilder.createValidCustomer().build()))
+                .thenReturn(Mono.empty());
     }
 
     @Test
@@ -171,6 +174,35 @@ public class CustomerControllerIT {
         testClient
                 .delete()
                 .uri(API + "/{id}", 1L)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("$.status").isEqualTo(404)
+                .jsonPath("$.developerMessage").isEqualTo("A ResponseStatusException Happened");
+    }
+
+    @Test
+    @DisplayName("update save updated customer and returns empty mono when successful")
+    public void should_SaveUpdatedCustomer_WhenSuccessful() {
+        testClient
+                .put()
+                .uri(API + "/{id}", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(customer))
+                .exchange()
+                .expectStatus().isNoContent();
+    }
+
+    @Test
+    @DisplayName("update returns Mono error when customer does not exist")
+    public void update_ReturnMonoError_WhenEmptyMonoIsReturned() {
+        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Mono.empty());
+
+        testClient.put()
+                .uri(API + "/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(customer))
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody()

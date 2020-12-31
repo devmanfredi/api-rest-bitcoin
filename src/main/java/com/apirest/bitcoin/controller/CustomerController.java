@@ -39,6 +39,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Customer> update(@PathVariable Long id, @Valid @RequestBody Customer customer) {
         return customerService.update(customer.withId(id));
     }
