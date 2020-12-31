@@ -4,6 +4,7 @@ import com.apirest.bitcoin.domain.Customer;
 import com.apirest.bitcoin.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -20,11 +21,13 @@ public class CustomerController {
 
 
     @GetMapping()
+    @ResponseStatus(HttpStatus.OK)
     public Flux<Customer> findAll() {
         return customerService.findAll();
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public Mono<Customer> findById(@PathVariable Long id) {
         return customerService.findById(id);
     }
