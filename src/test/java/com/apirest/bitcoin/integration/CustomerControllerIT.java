@@ -56,6 +56,9 @@ public class CustomerControllerIT {
 
         BDDMockito.when(customerRepository.save(CustomerBuilder.createCustomerToBeSaved().build()))
                 .thenReturn(Mono.just(customer));
+
+        BDDMockito.when(customerRepository.delete(ArgumentMatchers.any(Customer.class)))
+                .thenReturn(Mono.empty());
     }
 
     @Test
@@ -147,5 +150,31 @@ public class CustomerControllerIT {
                 .expectBody()
                 .jsonPath("$.status").isEqualTo(400);
 
+    }
+
+    @Test
+    @DisplayName("delete removes the customer when successful")
+    public void delete_RemovesCustomer_WhenSuccessful() {
+        testClient
+                .delete()
+                .uri(API + "/{id}", 1L)
+                .exchange()
+                .expectStatus().isNoContent();
+    }
+
+    @Test
+    @DisplayName("delete returns Mono error when customer does not exist")
+    public void should_ReturnMonoError_WhenEmptyMonoIsReturned() {
+        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Mono.empty());
+
+        testClient
+                .delete()
+                .uri(API + "/{id}", 1L)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("$.status").isEqualTo(404)
+                .jsonPath("$.developerMessage").isEqualTo("A ResponseStatusException Happened");
     }
 }
