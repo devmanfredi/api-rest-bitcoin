@@ -33,6 +33,7 @@ public class CustomerController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Mono<Customer> save(@Valid @RequestBody Customer customer) {
         return customerService.save(customer);
     }

@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
 import reactor.blockhound.BlockHound;
 import reactor.blockhound.BlockingOperationError;
 import reactor.core.publisher.Flux;
@@ -50,6 +52,9 @@ public class CustomerControllerIT {
                 .thenReturn(Flux.just(customer));
 
         BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Mono.just(customer));
+
+        BDDMockito.when(customerRepository.save(CustomerBuilder.createCustomerToBeSaved().build()))
                 .thenReturn(Mono.just(customer));
     }
 
@@ -108,6 +113,39 @@ public class CustomerControllerIT {
                 .expectBody()
                 .jsonPath("$.status").isEqualTo(404)
                 .jsonPath("$.developerMessage").isEqualTo("A ResponseStatusException Happened");
+
+    }
+
+    @Test
+    @DisplayName("save creates an customer when successful")
+    public void should_SaveCustomer_WhenSuccessful() {
+        Customer customerToSaved = CustomerBuilder.createCustomerToBeSaved().build();
+
+        testClient
+                .post()
+                .uri(API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(customerToSaved))
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody(Customer.class)
+                .isEqualTo(customer);
+    }
+
+    @Test
+    @DisplayName("save returns mono error with bad request when name is empty")
+    public void should_ReturnsError_WhenDocumentIsEmpty() {
+        Customer customerToSaved = CustomerBuilder.createCustomerToBeSaved().build().withDocument("");
+
+        testClient
+                .post()
+                .uri(API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(customerToSaved))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.status").isEqualTo(400);
 
     }
 }
