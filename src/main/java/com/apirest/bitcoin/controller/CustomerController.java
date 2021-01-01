@@ -14,7 +14,7 @@ import javax.validation.Valid;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/rest/bitcoin/customer")
+@RequestMapping("/api/v1/rest/customer")
 public class CustomerController {
 
     private final CustomerService customerService;

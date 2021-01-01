@@ -32,11 +32,21 @@ public class CustomerService {
     private <T> Mono<T> monoResponseStatusNotFoundException() {
         return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
     }
+//
+//    public Mono<Customer> update(Customer customer) {
+//        log.debug(customer.getBalance().toString());
+//        return findById(customer.getId())
+//                .flatMap(customerRepository::save)
+//                .thenReturn(customer);
+//    }
 
     public Mono<Customer> update(Customer customer) {
         return findById(customer.getId())
-                .flatMap(customerRepository::save)
-                .thenReturn(customer);
+                .flatMap(cust -> {
+                    cust.setBalance(customer.getBalance());
+                    return customerRepository.save(cust);
+                })
+                .map(update -> customer);
     }
 
     public Mono<Void> delete(Long customerId) {
