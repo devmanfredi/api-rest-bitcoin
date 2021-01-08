@@ -1,6 +1,7 @@
 package com.apirest.bitcoin.service;
 
 import com.apirest.bitcoin.domain.Customer;
+import com.apirest.bitcoin.exception.MessageException;
 import com.apirest.bitcoin.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,15 +17,17 @@ import reactor.core.publisher.Mono;
 public class CustomerService {
     private final CustomerRepository customerRepository;
 
-    public Mono<Customer> save(Customer customer) {
-        return customerRepository.save(customer);
+    public Mono<Customer> save(Customer customer) throws MessageException {
+        return customerRepository.findByDocument(customer.getDocument())
+                .flatMap(existingDocument -> Mono.error(new MessageException("Cpf já existe")))
+                .then(customerRepository.save(customer));
     }
 
     public Flux<Customer> findAll() {
         return customerRepository.findAll();
     }
 
-    public Mono<Customer> findById(Long customerId) {
+    public Mono<Customer> findById(String customerId) {
         return customerRepository.findById(customerId)
                 .switchIfEmpty(monoResponseStatusNotFoundException());
     }
@@ -32,26 +35,20 @@ public class CustomerService {
     private <T> Mono<T> monoResponseStatusNotFoundException() {
         return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
     }
-//
-//    public Mono<Customer> update(Customer customer) {
-//        log.debug(customer.getBalance().toString());
-//        return findById(customer.getId())
-//                .flatMap(customerRepository::save)
-//                .thenReturn(customer);
-//    }
 
     public Mono<Customer> update(Customer customer) {
         return findById(customer.getId())
                 .flatMap(cust -> {
-                    cust.setBalance(customer.getBalance());
+                    cust.setBalanceReal(customer.getBalanceReal());
                     return customerRepository.save(cust);
                 })
                 .map(update -> customer);
     }
 
-    public Mono<Void> delete(Long customerId) {
+    public Mono<Void> delete(String customerId) {
         return findById(customerId)
                 .flatMap(customerRepository::delete);
     }
+
 }
 
