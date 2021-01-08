@@ -2,6 +2,7 @@ package com.apirest.bitcoin.controller;
 
 import com.apirest.bitcoin.builders.CustomerBuilder;
 import com.apirest.bitcoin.domain.Customer;
+import com.apirest.bitcoin.exception.MessageException;
 import com.apirest.bitcoin.service.CustomerService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,20 +38,20 @@ class CustomerControllerTest {
     }
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws MessageException {
         BDDMockito.when(customerService.findAll())
                 .thenReturn(Flux.just(customer));
 
         BDDMockito.when(customerService.save(CustomerBuilder.createCustomerToBeSaved().build()))
                 .thenReturn(Mono.just(customer));
 
-        BDDMockito.when(customerService.findById(ArgumentMatchers.anyLong()))
+        BDDMockito.when(customerService.findById(ArgumentMatchers.anyString()))
                 .thenReturn(Mono.just(customer));
 
         BDDMockito.when(customerService.update(CustomerBuilder.createValidCustomer().build()))
                 .thenReturn(Mono.just(customer));
 
-        BDDMockito.when(customerService.delete(ArgumentMatchers.anyLong()))
+        BDDMockito.when(customerService.delete(ArgumentMatchers.anyString()))
                 .thenReturn(Mono.empty());
 
     }
@@ -82,7 +83,7 @@ class CustomerControllerTest {
 
     @Test
     @DisplayName("Save customer")
-    public void dadoCustomer_quandoSalvar_entaoRetornaCustomerSalvo() {
+    public void dadoCustomer_quandoSalvar_entaoRetornaCustomerSalvo() throws MessageException {
         Customer customerToBeSaved = CustomerBuilder.createCustomerToBeSaved().build();
         StepVerifier.create(customerController.save(customerToBeSaved))
                 .expectSubscription()
@@ -93,7 +94,7 @@ class CustomerControllerTest {
     @Test
     @DisplayName("Find Customer by Id")
     public void dadoCustomer_quandoPesquisarPeloId_entaoRetornaCustomer() {
-        StepVerifier.create(customerController.findById(1L))
+        StepVerifier.create(customerController.findById(ArgumentMatchers.anyString()))
                 .expectSubscription()
                 .expectNext(customer)
                 .verifyComplete();
@@ -102,7 +103,7 @@ class CustomerControllerTest {
     @Test
     @DisplayName("Update Customer")
     public void dadoCustomer_quandoAtualizar_entaoRetornaCustomerAtualizado() {
-        StepVerifier.create(customerController.update(1L, CustomerBuilder.createValidCustomer().build()))
+        StepVerifier.create(customerController.update(ArgumentMatchers.anyString(), CustomerBuilder.createValidCustomer().build()))
                 .expectSubscription()
                 .expectNext(customer)
                 .verifyComplete();
@@ -111,7 +112,7 @@ class CustomerControllerTest {
     @Test
     @DisplayName("Delete Customer")
     public void dadoCustomer_quandoDeletar_entaoRetornarSucesso() {
-        StepVerifier.create(customerController.delete(1L))
+        StepVerifier.create(customerController.delete(ArgumentMatchers.anyString()))
                 .expectSubscription()
                 .verifyComplete();
     }
