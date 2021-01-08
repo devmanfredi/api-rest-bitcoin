@@ -51,7 +51,7 @@ public class CustomerControllerIT {
         BDDMockito.when(customerRepository.findAll())
                 .thenReturn(Flux.just(customer));
 
-        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyString()))
                 .thenReturn(Mono.just(customer));
 
         BDDMockito.when(customerRepository.save(CustomerBuilder.createCustomerToBeSaved().build()))
@@ -108,7 +108,7 @@ public class CustomerControllerIT {
     @Test
     @DisplayName("findById return a Mono with customer when it exists")
     public void should_ReturnErrorCustomer_whenIdIsEmpty() {
-        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyString()))
                 .thenReturn(Mono.empty());
 
         testClient
@@ -168,7 +168,7 @@ public class CustomerControllerIT {
     @Test
     @DisplayName("delete returns Mono error when customer does not exist")
     public void should_ReturnMonoError_WhenEmptyMonoIsReturned() {
-        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyString()))
                 .thenReturn(Mono.empty());
 
         testClient
@@ -196,7 +196,7 @@ public class CustomerControllerIT {
     @Test
     @DisplayName("update returns Mono error when customer does not exist")
     public void update_ReturnMonoError_WhenEmptyMonoIsReturned() {
-        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyString()))
                 .thenReturn(Mono.empty());
 
         testClient.put()

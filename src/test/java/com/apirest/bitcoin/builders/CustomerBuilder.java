@@ -12,7 +12,7 @@ public class CustomerBuilder {
         builder.customer = Customer.builder()
                 .name("Heuler")
                 .document("02205652281")
-                .balance(BigDecimal.valueOf(10000))
+                .balanceReal(BigDecimal.valueOf(10000))
                 .build();
         return builder;
     }
@@ -21,10 +21,10 @@ public class CustomerBuilder {
     public static CustomerBuilder createValidCustomer(){
         CustomerBuilder builder = new CustomerBuilder();
         builder.customer = Customer.builder()
-                .id(1L)
+                .id("5ff764651b1c642152649c64")
                 .name("Heuler")
                 .document("02205652281")
-                .balance(BigDecimal.valueOf(10000))
+                .balanceReal(BigDecimal.valueOf(10000))
                 .build();
         return builder;
     }
@@ -32,10 +32,10 @@ public class CustomerBuilder {
     public static CustomerBuilder createValidUpdateCustomer(){
         CustomerBuilder builder = new CustomerBuilder();
         builder.customer = Customer.builder()
-                .id(1L)
+                .id("5ff764651b1c642152649c64")
                 .name("Heuler Manfredi")
                 .document("02205652281")
-                .balance(BigDecimal.valueOf(10000))
+                .balanceReal(BigDecimal.valueOf(10000))
                 .build();
         return builder;
     }

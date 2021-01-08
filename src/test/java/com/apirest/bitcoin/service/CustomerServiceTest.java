@@ -2,6 +2,7 @@ package com.apirest.bitcoin.service;
 
 import com.apirest.bitcoin.builders.CustomerBuilder;
 import com.apirest.bitcoin.domain.Customer;
+import com.apirest.bitcoin.exception.MessageException;
 import com.apirest.bitcoin.repository.CustomerRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +43,7 @@ class CustomerServiceTest {
         BDDMockito.when(customerRepository.save(CustomerBuilder.createCustomerToBeSaved().build()))
                 .thenReturn(Mono.just(customer));
 
-        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyString()))
                 .thenReturn(Mono.just(customer));
 
         BDDMockito.when(customerRepository.save(CustomerBuilder.createValidCustomer().build()))
@@ -73,7 +74,7 @@ class CustomerServiceTest {
 
     @Test
     @DisplayName("Save a customer")
-    public void dadoCustomer_quandoSalvar_entaoRetornaCustomerSalvo() {
+    public void dadoCustomer_quandoSalvar_entaoRetornaCustomerSalvo() throws MessageException {
         Customer customerToBeSaved = CustomerBuilder.createCustomerToBeSaved().build();
         StepVerifier.create(customerService.save(customerToBeSaved))
                 .expectSubscription()
@@ -84,7 +85,7 @@ class CustomerServiceTest {
     @Test
     @DisplayName("Find Customer by Id")
     public void dadoCustomer_quandoPesquisarPeloId_entaoRetornaCustomer() {
-        StepVerifier.create(customerService.findById(1L))
+        StepVerifier.create(customerService.findById(ArgumentMatchers.anyString()))
                 .expectSubscription()
                 .expectNext(customer)
                 .verifyComplete();
@@ -93,10 +94,10 @@ class CustomerServiceTest {
     @Test
     @DisplayName("findById returns Mono error when customer does not exist")
     public void dadoCustomer_quandoPesquisarPeloId_entaoDeveRetornar() {
-        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyString()))
                 .thenReturn(Mono.empty());
 
-        StepVerifier.create(customerService.findById(1L))
+        StepVerifier.create(customerService.findById(ArgumentMatchers.anyString()))
                 .expectSubscription()
                 .expectError(ResponseStatusException.class)
                 .verify();
@@ -114,7 +115,7 @@ class CustomerServiceTest {
     @Test
     @DisplayName("update returns Mono error when customer does not exist")
     public void dadoCustomer_quandoUpdate_entaoRetornaErro() {
-        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyString()))
                 .thenReturn(Mono.empty());
 
         StepVerifier.create(customerService.update(CustomerBuilder.createValidCustomer().build()))
@@ -126,7 +127,7 @@ class CustomerServiceTest {
     @Test
     @DisplayName("Delete Customer")
     public void dadoCustomer_quandoDeletar_entaoRetornarSucesso() {
-        StepVerifier.create(customerService.delete(1L))
+        StepVerifier.create(customerService.delete(ArgumentMatchers.anyString()))
                 .expectSubscription()
                 .verifyComplete();
     }
@@ -134,10 +135,10 @@ class CustomerServiceTest {
     @Test
     @DisplayName("delete returns Mono error when customer does not exist")
     public void dadoCustomer_quandoDeletar_entaoRetornaErro() {
-        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyLong()))
+        BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyString()))
                 .thenReturn(Mono.empty());
 
-        StepVerifier.create(customerService.delete(1L))
+        StepVerifier.create(customerService.delete(ArgumentMatchers.anyString()))
                 .expectSubscription()
                 .expectError(ResponseStatusException.class)
                 .verify();
