@@ -9,12 +9,5 @@ import lombok.*;
 @Builder
 @With
 public class BitcoinData {
-    private DataBit data;
-}
-
-@Data
-class DataBit {
-    public String base;
-    public String currency;
-    public String amount;
+    private BitcoinResponse data;
 }
