@@ -1,5 +1,7 @@
 package com.apirest.bitcoin.service;
 
+import com.apirest.bitcoin.api.BitcoinApi;
+import com.apirest.bitcoin.domain.BalanceByCustomer;
 import com.apirest.bitcoin.domain.Customer;
 import com.apirest.bitcoin.exception.MessageException;
 import com.apirest.bitcoin.repository.CustomerRepository;
@@ -8,15 +10,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.math.BigDecimal;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class CustomerService {
     private final CustomerRepository customerRepository;
+    private final WebClient webClient;
 
 
     public Mono<Customer> save(Customer customer) {
@@ -37,14 +43,13 @@ public class CustomerService {
                 .switchIfEmpty(monoResponseStatusNotFoundException());
     }
 
-    public Mono<Customer> update(Customer customer) {
-        return customerRepository.findById(customer.getId())
+    public Mono<Customer> update(String customerId, BalanceByCustomer customer) {
+        return customerRepository.findById(customerId)
                 .switchIfEmpty(Mono.error(new MessageException("Custumer not found")))
                 .flatMap(cust -> {
                     cust.setBalanceReal(customer.getBalanceReal());
                     return customerRepository.save(cust);
-                })
-                .map(update -> customer);
+                });
     }
 
     public Mono<Void> delete(String customerId) {
@@ -61,5 +66,22 @@ public class CustomerService {
         return Mono.just(DocumentValidation.cpfValido(document));
     }
 
+    public Mono<Customer> startOperation(String customerId, BigDecimal quantity) {
+        BitcoinApi api = new BitcoinApi();
+        return customerRepository.findById(customerId)
+                .switchIfEmpty(Mono.error(new MessageException("Customer not found")))
+                .map(customer -> customer)
+                .flatMap(customer -> api.getPrice(webClient).map(data -> new BigDecimal(data.getAmount()))
+                        .flatMap(price -> {
+                            if (price.compareTo(customer.getBalanceReal().multiply(quantity)) < 0) {
+                                Mono.error(new MessageException("Sem Saldo"));
+                            }
+
+                            customer.setBalanceBitcoin(quantity);
+                            customer.setBalanceReal(customer.getBalanceReal().subtract(price.multiply(quantity)));
+                            return Mono.just(customer);
+                        }))
+                .flatMap(customerRepository::save);
+    }
 }
 
