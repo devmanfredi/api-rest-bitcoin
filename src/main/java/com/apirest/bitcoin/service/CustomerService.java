@@ -1,8 +1,8 @@
 package com.apirest.bitcoin.service;
 
 import com.apirest.bitcoin.api.BitcoinApi;
-import com.apirest.bitcoin.domain.BalanceByCustomer;
 import com.apirest.bitcoin.domain.Customer;
+import com.apirest.bitcoin.dto.BitBalanceRequestDTO;
 import com.apirest.bitcoin.exception.MessageException;
 import com.apirest.bitcoin.repository.CustomerRepository;
 import com.apirest.bitcoin.validation.DocumentValidation;
@@ -43,7 +43,7 @@ public class CustomerService {
                 .switchIfEmpty(monoResponseStatusNotFoundException());
     }
 
-    public Mono<Customer> update(String customerId, BalanceByCustomer customer) {
+    public Mono<Customer> update(String customerId, BitBalanceRequestDTO customer) {
         return customerRepository.findById(customerId)
                 .switchIfEmpty(Mono.error(new MessageException("Custumer not found")))
                 .flatMap(cust -> {

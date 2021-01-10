@@ -1,8 +1,8 @@
 package com.apirest.bitcoin.controller;
 
-import com.apirest.bitcoin.domain.BalanceByCustomer;
-import com.apirest.bitcoin.domain.BuyBitcoin;
 import com.apirest.bitcoin.domain.Customer;
+import com.apirest.bitcoin.dto.BitBalanceRequestDTO;
+import com.apirest.bitcoin.dto.BitPayBitcoinRequestDTO;
 import com.apirest.bitcoin.exception.MessageException;
 import com.apirest.bitcoin.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -57,7 +57,7 @@ public class CustomerController {
     })
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Mono<Customer> update(@PathVariable String id, @Valid @RequestBody BalanceByCustomer customer) {
+    public Mono<Customer> update(@PathVariable String id, @Valid @RequestBody BitBalanceRequestDTO customer) {
         return customerService.update(id, customer);
     }
 
@@ -76,7 +76,7 @@ public class CustomerController {
     })
     @PostMapping("/bitcoin/{customerId}")
     @ResponseStatus(HttpStatus.OK)
-    public Mono<Customer> buyBitcoin(@PathVariable String customerId, @Valid @RequestBody BuyBitcoin quantityBitcoin) {
+    public Mono<Customer> buyBitcoin(@PathVariable String customerId, @Valid @RequestBody BitPayBitcoinRequestDTO quantityBitcoin) {
         return customerService.startOperation(customerId, quantityBitcoin.getQuantity());
     }
 }
