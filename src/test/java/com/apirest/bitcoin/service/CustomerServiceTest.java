@@ -2,6 +2,7 @@ package com.apirest.bitcoin.service;
 
 import com.apirest.bitcoin.builders.CustomerBuilder;
 import com.apirest.bitcoin.domain.Customer;
+import com.apirest.bitcoin.dto.BitBalanceRequestDTO;
 import com.apirest.bitcoin.exception.MessageException;
 import com.apirest.bitcoin.repository.CustomerRepository;
 import org.junit.jupiter.api.*;
@@ -19,6 +20,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
+import java.math.BigDecimal;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
@@ -106,7 +108,7 @@ class CustomerServiceTest {
     @Test
     @DisplayName("Update Customer")
     public void dadoCustomer_quandoAtualizar_entaoRetornaCustomerAtualizado() {
-        StepVerifier.create(customerService.update(CustomerBuilder.createValidUpdateCustomer().build()))
+        StepVerifier.create(customerService.update(CustomerBuilder.createValidUpdateCustomer().build().getId(), new BitBalanceRequestDTO(BigDecimal.valueOf(100000))))
                 .expectSubscription()
                 .expectNext(CustomerBuilder.createValidUpdateCustomer().build())
                 .verifyComplete();
@@ -118,7 +120,7 @@ class CustomerServiceTest {
         BDDMockito.when(customerRepository.findById(ArgumentMatchers.anyString()))
                 .thenReturn(Mono.empty());
 
-        StepVerifier.create(customerService.update(CustomerBuilder.createValidCustomer().build()))
+        StepVerifier.create(customerService.update(CustomerBuilder.createValidCustomer().build().getId(), new BitBalanceRequestDTO(BigDecimal.valueOf(10000))))
                 .expectSubscription()
                 .expectError(ResponseStatusException.class)
                 .verify();
