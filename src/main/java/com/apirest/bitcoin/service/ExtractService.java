@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class ExtractService {
 
-    public Mono<Void> save(BigDecimal quantity, Mono<BitcoinResponse> price) {
+    public void save(BigDecimal quantity, Mono<BitcoinResponse> price) {
+
     }
 }
