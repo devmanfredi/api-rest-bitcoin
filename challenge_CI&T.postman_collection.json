@@ -1,0 +1,150 @@
+{
+	"info": {
+		"_postman_id": "e163da4f-4cb5-4f89-9ace-0e4ce70f18ef",
+		"name": "challenge_CI&T",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create customer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"name\": \"Fulano de tal\",\t\r\n\t\"document\": \"85588686039\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/rest/customer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"rest",
+						"customer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "find customer",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/rest/customer/5ffc2dd49d5a641ae73ef525",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"rest",
+						"customer",
+						"5ffc2dd49d5a641ae73ef525"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update balance of customer",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "  {\r\n    \"balance_real\": 663393.906087\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/rest/customer/5ffc2dd49d5a641ae73ef525",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"rest",
+						"customer",
+						"5ffc2dd49d5a641ae73ef525"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "find all customers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/rest/customer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"rest",
+						"customer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "buy bitcoin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"quantity\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/rest/customer/bitcoin/5ffc2dd49d5a641ae73ef525",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"rest",
+						"customer",
+						"bitcoin",
+						"5ffc2dd49d5a641ae73ef525"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
