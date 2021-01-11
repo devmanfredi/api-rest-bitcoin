@@ -16,6 +16,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -73,12 +74,14 @@ public class CustomerService {
                 .map(customer -> customer)
                 .flatMap(customer -> api.getPrice(webClient).map(data -> new BigDecimal(data.getAmount()))
                         .flatMap(price -> {
-                            if (price.compareTo(customer.getBalanceReal().multiply(quantity)) < 0) {
-                                Mono.error(new MessageException("Sem Saldo"));
-                            }
+                            if (customer.getBalanceReal().compareTo(price.multiply(quantity)) < 0) {
+                                return Mono.error(new MessageException("Sem Saldo"));
+                            } else {
 
-                            customer.setBalanceBitcoin(quantity);
-                            customer.setBalanceReal(customer.getBalanceReal().subtract(price.multiply(quantity)));
+                                customer.setBalanceBitcoin(Objects.isNull(customer.getBalanceBitcoin()) ?
+                                        quantity : customer.getBalanceBitcoin().add(quantity));
+                                customer.setBalanceReal(customer.getBalanceReal().subtract(price.multiply(quantity)));
+                            }
                             return Mono.just(customer);
                         }))
                 .flatMap(customerRepository::save);
