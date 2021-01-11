@@ -24,7 +24,7 @@ mvn spring-boot:run
 
 ## API Documentation
 
-https://logstack-api.herokuapp.com/swagger-ui.html
+http://localhost:8080/webjars/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config
 
 ## Explore Rest APIs
 
