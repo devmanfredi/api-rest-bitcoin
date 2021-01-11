@@ -36,6 +36,5 @@ Customers     | /api/v1/rest/customer/:id    | GET              | Return custome
 Customers     | /api/v1/rest/customer/:id    | PUT              | transfers balance to the customer
 Customers     | /api/v1/rest/customer/:id    | DELETE           | Remove customer
 Customers     | /api/v1/rest/customer/bitcoin/:id     | POST    | Buy Bitcoin
-              | Return customer authenticated
 
 You can test them using postman or any other rest client.
