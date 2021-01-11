@@ -79,4 +79,11 @@ public class CustomerController {
     public Mono<Customer> buyBitcoin(@PathVariable String customerId, @Valid @RequestBody BitPayBitcoinRequestDTO quantityBitcoin) {
         return customerService.startOperation(customerId, quantityBitcoin.getQuantity());
     }
+
+//    @Operation(description = "Informações consolidades")
+//    @PostMapping("/bitcoin/extract/customerId}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Mono<ExtractCustomer> extract(@PathVariable String customerId) {
+//        return customerService.getExtract();
+//    }
 }
