@@ -24,6 +24,7 @@ import java.util.Objects;
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private final WebClient webClient;
+    private final ExtractService extractService;
 
 
     public Mono<Customer> save(Customer customer) {
